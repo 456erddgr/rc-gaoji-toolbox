@@ -75,3 +75,43 @@ python -m PyInstaller build_installer.spec --noconfirm
 ## 免责声明
 
 非官方工具，与 DJI 无任何关系。改机有风险，后果自负。请先备份、先看条款、先想清楚。
+
+
+## 📖 图文教程
+
+### 1. 分区备份（ADB 就能用，不用切 fastboot）
+
+![分区备份](docs/screens/partition.png)
+
+1. USB 连上遥控器，确认「设备状态」显示已连接、有 root；
+2. 进「分区备份」页，会按机型自动列出分区（带大小）；
+3. 点某个分区的「备份」→ 写到遥控器 `/data/local/tmp/rc2part/`，再用「下载」拉到电脑；
+4. 每个备份都会生成同名 `.sha256`，方便校验。
+
+### 2. ADB 直刷分区
+
+同一个分区行上点「刷入」→ 选镜像 → 工具会：
+先自动备份 → 校验「镜像大小 == 分区大小」→ 写入 → 回读 sha256 → 不一致自动刷回备份。
+
+### 3. 投屏（两种模式）
+
+![投屏](docs/screens/mirror.png)
+
+- **scrcpy 真视频流**：RC Pro / RC Pro 2 / RC Plus / RC1 可用（这些机型不拦 `app_process`）；
+- **截图推流（兼容）**：RC2 只能用这个，约 1~2 帧/秒，但点击、滑动是真的注入（`/dev/input/event2`）。
+- 「自动」模式会先探测，能 scrcpy 就用 scrcpy，不能用就退回推流。
+
+### 4. 虚拟手柄（遥控器变 Xbox 360 手柄）
+
+![虚拟手柄](docs/screens/pad.png)
+
+1. 电脑装 **ViGEmBus** 驱动（安装程序会检测；没有会提示下载地址）；
+2. 点「开始」→ 自动 `adb reverse tcp:9999 tcp:9999` 并监听 127.0.0.1:9999；
+3. 遥控器端把摇杆流指向 `127.0.0.1:9999`，每行一个 JSON：`{"ax":[1024,1024,1024,1024,1024,1024]}`；
+4. 电脑上出现一个 Xbox 360 手柄，游戏里直接用。
+5. 延迟档位：LOW / MID / HIGH（外推补偿不同，源是 9~10Hz 的 DUML 摇杆帧，一拍约 100ms，本工具只压补帧与推送段）。
+
+### 5. ADB Root（只把 adb 提权，不改任何分区、不动数据）
+
+「Root/模块」页 → 「ADB Root」卡 → 开启：把 `adbd-root` 与注入脚本推到 `/data/adb-persist/rc-adbroot` 并执行，
+让 adbd 以 root 身份跑；完全不动 boot / dji_apk / super 等任何分区，「恢复」按钮一键回到原状。
