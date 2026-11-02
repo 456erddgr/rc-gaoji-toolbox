@@ -18,6 +18,8 @@ for _p in (os.path.join(_HERE, "app"), _HERE):
 import engine as E
 import features as F
 import devices as D
+import mirror as M
+import gamepad as GP
 
 
 def app_dir():
@@ -1001,6 +1003,70 @@ esac
             return _err(e)
 
     # ---- 投屏 ----
+    def mirror_status(self):
+        """投屏能力：能不能用 scrcpy 真视频流 / 只能用截图推流"""
+        try:
+            prof = D.detect()
+            caps = (prof.get("caps") or {}) if prof.get("ok") else {}
+            probe = M.probe_app_process()
+            scrcpy_ok = bool(caps.get("mirror_scrcpy")) and (probe.get("ok") is not False)
+            model = prof.get("model") or ""
+            if probe.get("ok") is False:
+                tip = "这台机型（%s）的 app_process 被 SELinux 拦了，只能用截图推流（1~2 帧/秒）。" % (model or "未知")
+            elif probe.get("ok") is True:
+                tip = "app_process 可用，建议用 scrcpy 真视频流（流畅、可鼠标操作）。"
+            else:
+                tip = "没检测到设备。插上遥控器后可以自动判断用哪种投屏。"
+            return _j({"ok": True, "scrcpy_exe": M.scrcpy_ready(),
+                       "app_process": probe.get("ok"), "probe_msg": probe.get("msg", ""),
+                       "model": model, "profile": (prof.get("profile") or {}).get("name", ""),
+                       "suggest_scrcpy": bool(scrcpy_ok), "connected": bool(prof.get("ok")),
+                       "tip": tip})
+        except Exception as e:
+            return _err("mirror_status: %s" % e)
+
+    def mirror_scrcpy_start(self, size=1920, fps=60, bitrate="8M", record=False):
+        try:
+            return _j(M.start(max_size=int(size or 1920), max_fps=int(fps or 60),
+                              bitrate=(bitrate or "8M"), record=bool(record)))
+        except Exception as e:
+            return _err("启动 scrcpy 失败: %s" % e)
+
+    def mirror_scrcpy_stop(self):
+        try:
+            return _j(M.stop())
+        except Exception as e:
+            return _err("停止 scrcpy 失败: %s" % e)
+
+    def mirror_scrcpy_status(self):
+        try:
+            return _j(M.status())
+        except Exception as e:
+            return _err("查询 scrcpy 状态失败: %s" % e)
+
+    def pad_status(self):
+        st = GP.state()
+        st.update(GP.available())
+        return _j(st)
+
+    def pad_start(self, port=9999):
+        try:
+            return _j(GP.start(port=int(port or 9999)))
+        except Exception as e:
+            return _err("启动虚拟手柄失败: %s" % e)
+
+    def pad_stop(self):
+        try:
+            return _j(GP.stop())
+        except Exception as e:
+            return _err("停止虚拟手柄失败: %s" % e)
+
+    def pad_state(self):
+        try:
+            return _j(GP.state())
+        except Exception as e:
+            return _err("查询虚拟手柄状态失败: %s" % e)
+
     def scrcpy_status(self):
         """投屏能力检测。★ 实测本机 app_process 被 DJI ROM 拦截，
         scrcpy 的 server 端无法运行，只能用 exec-out 轮询截图方案。"""
