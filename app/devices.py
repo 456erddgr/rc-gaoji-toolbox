@@ -31,6 +31,7 @@ PROFILES = [
         "platform": "lahaina",
         "android": "11",
         "soc": "骁龙 778G (SM7325-AD)",
+        "scrcpy_ok": False,
         "partitions": ["boot_a", "boot_b", "dji_apk", "dji_persist", "persist",
                        "misc", "metadata", "vbmeta_a", "vbmeta_b", "dtbo_a", "dtbo_b",
                        "super", "modem_a", "modem_b", "userdata"],
@@ -49,6 +50,7 @@ PROFILES = [
         "platform": "kona",
         "android": "10",
         "soc": "骁龙 865 (SM8250)",
+        "scrcpy_ok": True,
         "partitions": ["boot_a", "boot_b", "dji_persist", "persist", "misc", "metadata",
                        "vbmeta_a", "vbmeta_b", "vbmeta_system_a", "vbmeta_system_b",
                        "dtbo_a", "dtbo_b", "super", "modem_a", "modem_b", "userdata"],
@@ -68,6 +70,7 @@ PROFILES = [
         "platform": "sdm845",
         "android": "9",
         "soc": "骁龙 845 (SDM845)",
+        "scrcpy_ok": True,
         "partitions": ["boot_a", "boot_b", "persist", "misc", "vbmeta_a", "vbmeta_b",
                        "dtbo_a", "dtbo_b", "system_a", "vendor_a", "userdata"],
         "flashable": ["boot_a", "boot_b", "vbmeta_a", "vbmeta_b", "dtbo_a", "dtbo_b", "misc"],
@@ -83,6 +86,7 @@ PROFILES = [
         "platform": "kona",
         "android": "10",
         "soc": "骁龙 865 (SM8250)",
+        "scrcpy_ok": True,
         "partitions": ["boot_a", "boot_b", "persist", "misc", "metadata",
                        "vbmeta_a", "vbmeta_b", "dtbo_a", "dtbo_b", "super", "userdata"],
         "flashable": ["boot_a", "boot_b", "vbmeta_a", "vbmeta_b", "dtbo_a", "dtbo_b", "misc"],
@@ -98,6 +102,7 @@ PROFILES = [
         "platform": "taro",
         "android": "12",
         "soc": "骁龙 8 Gen1 (SM8450)",
+        "scrcpy_ok": True,
         "partitions": ["boot_a", "boot_b", "persist", "misc", "metadata",
                        "vbmeta_a", "vbmeta_b", "dtbo_a", "dtbo_b", "super", "userdata"],
         "flashable": ["boot_a", "boot_b", "vbmeta_a", "vbmeta_b", "dtbo_a", "dtbo_b", "misc"],
@@ -215,6 +220,8 @@ def detect(refresh=False):
         "flash_adb": bool(root_path and byname),
         "flash_fastboot": bool(bl_unlocked),
         "fastboot_read": False,
+        # 能不能跑 scrcpy 真视频流（DJI RC2 被 SELinux 拦 app_process，只能用截图推流）
+        "mirror_scrcpy": bool(prof.get("scrcpy_ok", True)),
     }
     if not is_dji:
         caps["backup"] = False
