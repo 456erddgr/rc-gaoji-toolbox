@@ -93,7 +93,8 @@ const PAGES = [
   { id: 'apps', name: '应用管理', ico: '▦', render: renderApps },
   { id: 'backup', name: '分区备份', ico: '⛁', render: renderBackup },
   { id: 'flash', name: '刷机/恢复', ico: '⚙', render: renderFlash },
-  { id: 'screen', name: '投屏/截图', ico: '▣', render: renderMirror },
+  { id: 'screen', name: '投屏/截图', ico: '▣', render: renderMirrorV2 },
+  { id: 'pad', name: '虚拟手柄', ico: '⊛', render: renderPad },
   { id: 'term', name: '命令终端', ico: '⌨', render: renderTerm },
   { id: 'tools', name: '实用工具', ico: '✳', render: renderTools },
   { id: 'about', name: '关于/免责', ico: 'ⓘ', render: renderAbout },
@@ -1246,7 +1247,7 @@ async function showDisclaimer() {
       '<div class="modal">' +
         '<div class="modal-head">' +
           '<h2>使用前必读 · 免责声明</h2>' +
-          '<p>RC 搞机工具箱 v6.0 &nbsp;·&nbsp; 作者：软糖布丁</p>' +
+          '<p>RC 搞机工具箱 v6.2 &nbsp;·&nbsp; 作者：软糖布丁</p>' +
         '</div>' +
         '<div class="modal-body">' + esc(DISCLAIMER) + '</div>' +
         '<div class="modal-foot">' +
@@ -1703,4 +1704,201 @@ async function adbFlashNow() {
     toast('刷写失败', 'err');
     log((r && r.msg) || '未知错误', 'err');
   }
+}
+
+/* ================= 投屏 v2（scrcpy 真视频流 / 截图推流 双模式）+ 虚拟手柄 ================= */
+let mv2Mode = localStorage.getItem('mv2mode') || 'auto';
+let mv2CapsCache = null;
+
+async function renderMirrorV2(wrap) {
+  wrap.innerHTML =
+    pageHead('投屏 / 截图', '真视频流（scrcpy）或截图推流（兼容模式），都支持点击控制') +
+    card('当前设备', '<div id="mv2Caps" class="sub">正在检测…</div>' +
+      '<div class="btn-row" style="margin-top:10px">' +
+      '<button class="btn blue" onclick="mv2Apply()">按检测结果启动</button>' +
+      '<button class="btn ghost" onclick="mv2StopAll()">全部停止</button>' +
+      '<button class="btn ghost" onclick="mv2Refresh()">重新检测</button>' +
+      '</div>') +
+    card('投屏方式', '<div class="term-tabs">' +
+      '<button class="term-tab" id="mv2tAuto" onclick="mv2SetMode(\'auto\')">自动（推荐）</button>' +
+      '<button class="term-tab" id="mv2tScr" onclick="mv2SetMode(\'scrcpy\')">scrcpy 真视频流</button>' +
+      '<button class="term-tab" id="mv2tStream" onclick="mv2SetMode(\'stream\')">截图推流（兼容）</button>' +
+      '</div>' +
+      '<div id="mv2Hint" class="tip" style="margin-top:10px"></div>' +
+      '<div class="sub" style="margin-top:8px">' +
+      '· scrcpy：真视频流，流畅、延迟低、可以鼠标直接点画面，需要机型不拦 app_process（RC Pro / RC Pro 2 / RC Plus / RC1）。<br>' +
+      '· 截图推流：DJI RC2 唯一可用的方式，约 1~2 帧/秒，但点击/滑动是真的。' +
+      '</div>') +
+    card('scrcpy 窗口', '<div id="mv2ScrBox" class="sub">未启动</div>' +
+      '<div class="btn-row" style="margin-top:10px">' +
+      '<button class="btn blue" onclick="mv2StartScrcpy()">启动 scrcpy</button>' +
+      '<button class="btn ghost" onclick="mv2StopScrcpy()">停止 scrcpy</button>' +
+      '<button class="btn ghost" onclick="mv2StartScrcpy(true)">启动并录制</button>' +
+      '</div>') +
+    card('截图推流画面', '<div class="btn-row">' +
+      '<button class="btn blue" onclick="mv2StartStream()">开始</button>' +
+      '<button class="btn ghost" onclick="mv2StopStream()">停止</button>' +
+      '<button class="btn ghost" onclick="mv2Shot()">截一张图</button>' +
+      '<button class="btn ghost" onclick="mv2Key(\'home\')">Home</button>' +
+      '<button class="btn ghost" onclick="mv2Key(\'back\')">返回</button>' +
+      '</div>' +
+      '<div id="mv2Box" style="margin-top:12px"><div class="empty">点「开始」后这里显示遥控器画面（约 1~2 帧/秒）</div></div>');
+  mv2UpdateTabs();
+  await mv2Refresh();
+}
+
+function mv2UpdateTabs() {
+  ['auto', 'scrcpy', 'stream'].forEach(m => {
+    const el = document.getElementById('mv2t' + m.charAt(0).toUpperCase() + m.slice(1));
+    if (el) el.classList.toggle('on', mv2Mode === m);
+  });
+  const hint = document.getElementById('mv2Hint');
+  if (hint) {
+    hint.textContent = mv2Mode === 'auto'
+      ? '自动：能跑 scrcpy 就用 scrcpy，跑不了就退回截图推流。'
+      : (mv2Mode === 'scrcpy' ? '强制 scrcpy：RC2 上会启动失败（app_process 被拦），失败后可手动切回截图推流。'
+        : '强制截图推流：任何机型都能用，但只有 1~2 帧/秒。');
+  }
+}
+
+function mv2SetMode(m) {
+  mv2Mode = m;
+  localStorage.setItem('mv2mode', m);
+  mv2UpdateTabs();
+}
+
+async function mv2Refresh() {
+  const box = document.getElementById('mv2Caps');
+  if (box) box.textContent = '正在检测…';
+  const d = await call('mirror_status');
+  mv2CapsCache = d;
+  if (!box) return;
+  if (!d || !d.ok) { box.textContent = '检测失败：' + ((d && d.msg) || '接口无响应'); return; }
+  box.innerHTML = '机型：<b>' + esc(d.model || '未连接') + '</b>' +
+    (d.profile ? '（' + esc(d.profile) + '）' : '') +
+    ' · scrcpy.exe：' + (d.scrcpy_exe ? '有' : '缺失') +
+    ' · app_process：' + (d.app_process === true ? '可用' : (d.app_process === false ? '被拦' : '未知')) +
+    '<br>' + esc(d.tip || '');
+}
+
+async function mv2Apply() {
+  const d = mv2CapsCache || await call('mirror_status');
+  if (!d || !d.connected) { toast('没检测到设备'); return; }
+  const useScr = mv2Mode === 'scrcpy' || (mv2Mode === 'auto' && d.suggest_scrcpy);
+  if (useScr) {
+    const r = await call('mirror_scrcpy_start', 1920, 60, '8M', false);
+    if (r && r.ok) { toast('scrcpy 已启动（独立窗口）'); mv2PaintScr(r); return; }
+    toast('scrcpy 起不来，改用截图推流');
+  }
+  await mv2StartStream();
+}
+
+function mv2PaintScr(r) {
+  const b = document.getElementById('mv2ScrBox');
+  if (b) b.innerHTML = (r && r.ok) ? ('运行中 · pid ' + (r.pid || '') + ' · ' + esc(r.msg || '')) : '未启动';
+}
+
+async function mv2StartScrcpy(record) {
+  const r = await call('mirror_scrcpy_start', 1920, 60, '8M', !!record);
+  mv2PaintScr(r);
+  toast(r && r.ok ? 'scrcpy 已启动（独立窗口）' : ('启动失败：' + ((r && (r.err || r.msg)) || '')));
+}
+
+async function mv2StopScrcpy() {
+  const r = await call('mirror_scrcpy_stop');
+  mv2PaintScr(null);
+  toast(r && r.ok ? '已停止 scrcpy' : '停止失败');
+}
+
+function mv2StopAll() { mv2StopScrcpy(); mv2StopStream(); }
+
+async function mv2StartStream() {
+  const box = document.getElementById('mv2Box');
+  if (box) box.innerHTML = '<img id="mv2Img" style="width:100%;border-radius:12px;display:block" src="/stream?t=' + Date.now() + '">' +
+    '<div class="sub" style="margin-top:8px">点画面=点击遥控器，拖动=滑动</div>';
+  const img = document.getElementById('mv2Img');
+  if (img) {
+    img.onload = () => { if (!img.dataset.w) { img.dataset.w = img.naturalWidth; img.dataset.h = img.naturalHeight; } };
+    img.onmousedown = e => { img._sx = e.offsetX; img._sy = e.offsetY; };
+    img.onmouseup = e => {
+      const sx = img._sx, sy = img._sy, ex = e.offsetX, ey = e.offsetY;
+      const w = parseInt(img.dataset.w || img.naturalWidth || 1920);
+      const h = parseInt(img.dataset.h || img.naturalHeight || 1080);
+      const kx = w / img.clientWidth, ky = h / img.clientHeight;
+      const x1 = sx * kx, y1 = sy * ky, x2 = ex * kx, y2 = ey * ky;
+      if (Math.hypot(ex - sx, ey - sy) < 12) call('tap_xy', Math.round(x2), Math.round(y2));
+      else call('swipe_xy', Math.round(x1), Math.round(y1), Math.round(x2), Math.round(y2), 180);
+    };
+  }
+  toast('截图推流已开始');
+}
+
+function mv2StopStream() {
+  const box = document.getElementById('mv2Box');
+  if (box) box.innerHTML = '<div class="empty">已停止</div>';
+}
+
+async function mv2Shot() {
+  const r = await call('screenshot');
+  toast((r && r.ok) ? ('已保存：' + (r.path || r.file || '')) : '截图失败');
+}
+
+async function mv2Key(k) { await call('key_press', k); }
+
+/* ---------------- 虚拟手柄 ---------------- */
+let padTimer = null;
+
+async function renderPad(wrap) {
+  wrap.innerHTML =
+    pageHead('虚拟手柄', '把遥控器摇杆变成电脑上的 Xbox 360 手柄（ViGEm）') +
+    card('状态', '<div id="padStat" class="sub">正在检测…</div>' +
+      '<div class="btn-row" style="margin-top:10px">' +
+      '<button class="btn blue" onclick="padStart()">开始</button>' +
+      '<button class="btn ghost" onclick="padStop()">停止</button>' +
+      '</div>') +
+    card('实时轴值', '<div id="padAxes" class="sub">—</div>' +
+      '<div class="sub" style="margin-top:8px">值域 0~2047，中点 1024。左摇杆 ← ax[3]/ax[2]，右摇杆 ← ax[0]/ax[1]。</div>') +
+    card('怎么用', '<div class="sub">' +
+      '1. 电脑装好 ViGEmBus 驱动（本机已装、vgamepad 已就绪）；<br>' +
+      '2. 点「开始」→ 自动执行 <code>adb reverse tcp:9999 tcp:9999</code> 并监听 9999；<br>' +
+      '3. 遥控器上跑发流的那一端（RC2ETX 的摇杆转发），把它指向 <code>127.0.0.1:9999</code>，每行一个 JSON：<code>{"ax":[1024,1024,1024,1024,1024,1024]}</code>；<br>' +
+      '4. 电脑上会多出一个 Xbox 360 手柄，游戏里直接用。' +
+      '</div>');
+  await padRefresh();
+  if (padTimer) clearInterval(padTimer);
+  padTimer = setInterval(() => { if (curPage === 'pad') padRefresh(); }, 800);
+}
+
+async function padRefresh() {
+  const d = await call('pad_state');
+  const s = document.getElementById('padStat');
+  if (s) {
+    if (!d || !d.ok) s.textContent = '查询失败';
+    else s.innerHTML = '运行中：<b>' + (d.running ? '是' : '否') + '</b>' +
+      ' · 端口 ' + d.port + ' · ViGEm ' + (d.vgamepad ? '就绪' : '缺失') +
+      ' · 连接 ' + esc(d.peer || '无') + ' · 速率 ' + (d.hz || 0) + ' Hz' +
+      ' · 样本 ' + (d.count || 0) + (d.err ? '<br><span style="color:#ff453a">' + esc(d.err) + '</span>' : '');
+  }
+  const a = document.getElementById('padAxes');
+  if (a && d && d.axes) {
+    a.innerHTML = ['LV', 'LH', 'RV', 'RH', 'P1', 'P2'].map((k, i) =>
+      '<div style="display:flex;align-items:center;gap:8px;margin:3px 0">' +
+      '<span style="width:32px;color:#8e8e93">' + k + '</span>' +
+      '<span style="width:56px;text-align:right">' + d.axes[i] + '</span>' +
+      '<span style="flex:1;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden">' +
+      '<span style="display:block;height:100%;width:' + Math.round(d.axes[i] / 2047 * 100) + '%;background:#0a84ff"></span></span>' +
+      '</div>').join('');
+  }
+}
+
+async function padStart() {
+  const r = await call('pad_start', 9999);
+  toast(r && r.ok ? ('已开始（' + (r.msg || '') + '）') : ('启动失败：' + ((r && r.err) || '')));
+  padRefresh();
+}
+
+async function padStop() {
+  const r = await call('pad_stop');
+  toast(r && r.ok ? '已停止' : '停止失败');
+  padRefresh();
 }
