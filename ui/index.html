@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RC 搞机工具箱</title>
+<link rel="stylesheet" href="assets/style.css?v=19">
+</head>
+<body>
+<div id="__err" style="position:fixed;left:0;top:0;right:0;z-index:999999;background:#7a1f1f;color:#fff;font:12px Consolas;padding:6px;display:none;white-space:pre-wrap"></div>
+<script>function __show(x){var d=document.getElementById("__err");d.style.display="block";d.textContent=(d.textContent+"
+"+x).slice(-900);}window.onerror=function(m,src,l){__show("ERR "+m+" @"+l);};window.addEventListener("unhandledrejection",function(e){__show("REJ "+((e.reason&&(e.reason.stack||e.reason.message))||e.reason));});</script>
+
+<div class="wallpaper" id="wallpaper"></div>
+<div class="bg-blobs">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="blob b4"></div>
+</div>
+<div class="noise"></div>
+
+<div class="titlebar" id="titlebar">
+  <div class="tb-left">
+    <span class="logo">RC</span>
+    <span class="logo-sub">搞机工具箱</span>
+    <span class="ver">v6.2</span>
+  </div>
+  <div class="tb-center">
+    <div class="dev-badge" id="devBadge">
+      <span class="dot"></span><span id="devText">未连接</span>
+    </div>
+  </div>
+  <div class="tb-right">
+    <button class="winbtn" id="btnMin" title="最小化">—</button>
+    <button class="winbtn" id="btnMax" title="最大化">□</button>
+    <button class="winbtn close" id="btnClose" title="关闭">✕</button>
+  </div>
+</div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <div class="page-wrap" id="pageWrap"></div>
+    <div class="console glass" id="console">
+      <div class="con-head">
+        <span class="con-title">运行日志</span>
+        <div class="con-btns">
+          <button class="mini" id="btnCopyLog">复制</button>
+          <button class="mini" id="btnClearLog">清空</button>
+        </div>
+      </div>
+      <div class="con-body" id="logBody"></div>
+    </div>
+  </main>
+</div>
+
+<!-- 八向拖拽缩放热区 -->
+<div class="rz rz-n" data-edge="n"></div>
+<div class="rz rz-s" data-edge="s"></div>
+<div class="rz rz-e" data-edge="e"></div>
+<div class="rz rz-w" data-edge="w"></div>
+<div class="rz rz-ne" data-edge="ne"></div>
+<div class="rz rz-nw" data-edge="nw"></div>
+<div class="rz rz-se" data-edge="se"></div>
+<div class="rz rz-sw" data-edge="sw"></div>
+
+
+<script src="assets/app.js?v=19"></script>
+</body>
+</html>
