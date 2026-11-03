@@ -5,13 +5,13 @@
 > ⚠️ 本工具会修改设备底层参数（CPU/GPU 频率、温控、zram/swap、分区镜像、Magisk 模块、开机动画、飞控参数等），
 > **用错会让遥控器变砖、黑屏、丢数据、失保**。请先看完软件里的免责声明再动手。
 
-**最新版本：v6.15** · [下载](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)
+**最新版本：v6.16** · [下载](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)
 
 | 产物 | 说明 |
 | --- | --- |
-| `RCGaojiToolbox-6.15.exe` | 电脑版免安装绿色版 |
-| `RCGaojiToolbox-Setup-6.15.exe` | 安装版（内置 ViGEmBus 与 DJI 驱动） |
-| `RC2-RemoteToolbox-2.28.apk` | 装在 RC2 遥控器上的遥控器版工具箱 |
+| `RCGaojiToolbox-6.16.exe` | 电脑版免安装绿色版 |
+| `RCGaojiToolbox-Setup-6.16.exe` | 安装版（内置 ViGEmBus 与 DJI 驱动） |
+| `RC2-RemoteToolbox-2.28.apk` | 装在 RC2 遥控器上的遥控器版工具箱（v6.16 未改遥控器端，仍是 v2.28） |
 
 ## 机型支持
 
@@ -24,6 +24,67 @@
 | DJI RC Pro 2 | RM510B/RM530 | 骁龙 8 Gen1 | ✅ | 需先有 root | BL 通常锁定 |
 
 **所有机型都是先探测再下结论**：分区目录（`/dev/block/bootdevice/by-name` 或 `/dev/block/by-name`）、root 是否存在、BL 是否解锁，全部运行时实测。某个能力不具备时会直接告诉你中文原因，不会给你一个空列表假装"功能坏了"。
+
+---
+
+## 🎮 v6.16：虚拟手柄真·丝滑（顺手修掉「连上却一动不动」）
+
+### 一、先说那个更严重的 bug
+
+以前虚拟手柄经常**连上了却一动不动**、`pad_status` 里 `count=0`、`peer=""`。
+根因不在算法，在监听循环：
+
+```python
+srv.settimeout(0.5)
+...
+except Exception:
+    break          # socket.timeout 也是 Exception → 半秒没人连，监听线程自杀
+```
+
+线程一退，内核照样完成三次握手（连接躺在 backlog 里），但永远没人 `recv`。
+`netstat` 看到的就是 `LISTENING` + `CLOSE_WAIT`。修法一行：`except socket.timeout: continue`。
+修完立刻 `count=48 / push_hz=227.1 / hz=9.55`。
+
+### 二、为什么以前那么卡
+
+老的 `_predict()` 是**三点外推**：`OVER=1.25` 允许 25% 过冲、`cap = abs(step)*0.25 + 6` 根本没钳住，
+而摇杆源是 **9.6Hz 硬上限**（实测 median 102ms）。于是：外推冲出 → 回拉 → 冻住 → 下一个点瞬移，
+偶尔还因为 `age > 135ms` 直接回中。离线对拍量化下来，单拍最大跳变 **539.3**。
+
+### 三、照着你那套「遥感监测」重写
+
+`OpenRC2-OneClick.zip` 里那套丝滑的遥感监测，**1.41 → 1.42 恰恰把三点外推废弃掉了**
+（源码注释原话：会冲出、会打回）。它靠的是：
+
+| 机制 | 参考实现 | 我们现在的做法 |
+| --- | --- | --- |
+| 帧间线性插值，窗口 20~45ms，走完停在真值上 | `StickSmooth.java:221-256` | `_value()`：`win` 钳 [20,60]，`u>=1` 返回最新真值 |
+| 三段低通：`dd<0.004` 或 `dd>0.05` 直通，中间 `+=0.80` | `StickSmooth.java:183-188` | `_lowpass()`：同口径，零滞后但小抖不抖 |
+| 三层频率解耦：9.6Hz → 控制 100Hz → 推 PC 250Hz → UI | `Radio.java:20` / `PadStream.java:26` / `RadioView.java:59` | 控制环 10ms 算低通、推流环 4ms 发手柄 |
+| 断流 250ms 重置历史，不拿旧值插值 | `StickSmooth.java:147` | `GAP_RESET_MS = 250` |
+| 快照原子发布，不撕裂 | `volatile int[]` 整体换引用 | `_feed()` 整帧换引用 |
+| 高精度定时器 | 安卓 HandlerThread | `timeBeginPeriod(1)`（以前没有 → 实际 15.6ms 抖动） |
+
+### 四、实测（不是估计）
+
+真 ViGEm 虚拟手柄，源 9.6Hz 推 5 秒：
+
+- 推流 **227Hz**（间隔 median 4.38ms / p99 5.00ms）
+- **单拍最大跳变 539 → 70.7**（p99 59.6），加速度尖峰 260 → 9.70
+
+三档预设可现场切：
+
+| 档位 | 窗口 | 单拍最大跳变 | 与真值错位 |
+| --- | --- | --- | --- |
+| 低延迟 | 35ms | 169 | 107ms |
+| **均衡（默认）** | 60ms | **98.4** | 124ms |
+| 高平滑 | 90ms | 65.6 | 142ms |
+
+### 五、诚实说明
+
+- 遥控器端 `toolbox2` **目前没有 9999 发送端**（只有 40007 读 + 40008 注入）。现在流畅跑的是
+  「遥控器上的 ETX 推流 + 我们 PC 端平滑」。
+- 40007 的 9~10Hz 是**物理上限**，没找到更高频旁路（UDP 40009 / binder / `/dev/input` 均无证据）。
 
 ---
 
