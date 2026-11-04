@@ -6,6 +6,7 @@
 [![downloads](https://img.shields.io/github/downloads/456erddgr/rc-gaoji-toolbox/total?color=3fb950)](https://github.com/456erddgr/rc-gaoji-toolbox/releases)
 [![stars](https://img.shields.io/github/stars/456erddgr/rc-gaoji-toolbox?color=f0b400)](https://github.com/456erddgr/rc-gaoji-toolbox/stargazers)
 [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-0078d4)](#)
+[![license](https://img.shields.io/github/license/456erddgr/rc-gaoji-toolbox)](LICENSE)
 
 **root 还没搞？** 那先去另一个仓库：[RC2 破解](https://github.com/456erddgr/rc2-unlock-toolkit) ——
 Root ADB、9 个 Magisk 模块、原厂分区镜像都在那边。这边负责「装好之后怎么折腾」。
@@ -312,6 +313,22 @@ python -m PyInstaller build_installer.spec --noconfirm
 - RC 系列 fastboot 基本"只写不读"（`fetch`/`oem dump`/`get_staged` 全部 unknown command），所以没法用 fastboot 抽镜像
 - 飞机 USB 直连（libusb bulk）尚未跑通，目前请走"经遥控器 DUML 回环口"
 - 不提供「回锁 BL」：DJI 遥控器回锁会直接变砖
+
+## 许可
+
+本仓库的代码（`app/`、`ui/`、`installer/`、构建脚本）用 **MIT**，见 [LICENSE](LICENSE)。随便改、随便发、商用也行，出了事别找我。
+
+安装包里**顺带装的第三方东西不受 MIT 管**，各自归各自的作者：
+
+| 组件 | 许可 / 归属 |
+| --- | --- |
+| ViGEmBus（虚拟手柄驱动） | BSD-3-Clause，作者 Nefarius |
+| DJI 的 USB 驱动（`Drivers_Win10`） | 大疆的，仅随安装包原样附带，未做修改 |
+| 大疆固件包（固件仓库下载的） | 大疆的，本仓库只负责下载和校验 SHA256，不重签、不修改 |
+
+第三方组件如有异议，提 issue，拿掉就是。
+
+---
 
 ## 免责声明
 
