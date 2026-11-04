@@ -24,6 +24,27 @@ Root ADB、9 个 Magisk 模块、原厂分区镜像都在那边。这边负责�
 
 ---
 
+## 下载
+
+两个入口，里头是同一批文件，哪个能下用哪个。
+
+**① GitHub Releases（跟着版本走，推荐）**
+
+| 文件 | 大小 | 是什么 |
+| --- | --- | --- |
+| [`RCGaojiToolbox-Setup-6.16.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RCGaojiToolbox-Setup-6.16.exe) | 101 MB | 安装程序，自带 ViGEmBus 和 DJI 的 USB 驱动，装完直接能用 |
+| [`RCGaojiToolbox-6.16.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RCGaojiToolbox-6.16.exe) | 34 MB | 绿色版，双击就跑，不写注册表（驱动要自己另外装） |
+| [`RC2-RemoteToolbox-2.28.apk`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RC2-RemoteToolbox-2.28.apk) | 408 KB | 遥控器版 App，`adb install` 进遥控器 |
+
+**② 123 云盘（GitHub 打不开的时候用）**
+
+👉 **[RC2 · 123 云盘](https://1843626542.share.123pan.cn/123pan/VX07Td-v8SoA?pwd=nRmH#)**　提取码 `nRmH`
+
+国内直连 GitHub 有时候就是下不动，网盘里放的是同一批文件，不用登录也不限速。
+网盘里的东西比 Releases 慢一版是正常的——新版本首发都在 Releases。
+
+---
+
 ## 机型支持
 
 | 机型 | 型号 | 平台 | 识别 | adb 备份/直刷 | fastboot 刷写 |
