@@ -1,17 +1,29 @@
-# RC 搞机工具箱（RC Gaoji Toolbox）
+# RC 搞机工具箱
 
-给 **DJI RC 系列遥控器**用的电脑端搞机工具。开源、离线、绿色（可选安装包）。
+插上 USB，把 DJI 遥控器当一台安卓机用：看分区、备份镜像、直接刷回去、投屏点着操作、调无人机的飞控参数。
 
-> ⚠️ 本工具会修改设备底层参数（CPU/GPU 频率、温控、zram/swap、分区镜像、Magisk 模块、开机动画、飞控参数等），
-> **用错会让遥控器变砖、黑屏、丢数据、失保**。请先看完软件里的免责声明再动手。
+[![release](https://img.shields.io/github/v/release/456erddgr/rc-gaoji-toolbox?label=release&color=2f81f7)](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)
+[![downloads](https://img.shields.io/github/downloads/456erddgr/rc-gaoji-toolbox/total?color=3fb950)](https://github.com/456erddgr/rc-gaoji-toolbox/releases)
+[![stars](https://img.shields.io/github/stars/456erddgr/rc-gaoji-toolbox?color=f0b400)](https://github.com/456erddgr/rc-gaoji-toolbox/stargazers)
+[![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-0078d4)](#)
+[![license](https://img.shields.io/github/license/456erddgr/rc-gaoji-toolbox)](LICENSE)
 
-**最新版本：v6.16** · [下载](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)
+**root 还没搞？** 那先去另一个仓库：[RC2 破解](https://github.com/456erddgr/rc2-unlock-toolkit) ——
+Root ADB、9 个 Magisk 模块、原厂分区镜像都在那边。这边负责「装好之后怎么折腾」。
 
-| 产物 | 说明 |
-| --- | --- |
-| `RCGaojiToolbox-6.16.exe` | 电脑版免安装绿色版 |
-| `RCGaojiToolbox-Setup-6.16.exe` | 安装版（内置 ViGEmBus 与 DJI 驱动） |
-| `RC2-RemoteToolbox-2.28.apk` | 装在 RC2 遥控器上的遥控器版工具箱（v6.16 未改遥控器端，仍是 v2.28） |
+**[下载 v6.16](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** ·
+[之前的版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) ·
+[碰到问题](https://github.com/456erddgr/rc-gaoji-toolbox/issues) ·
+[机型支持](#机型支持) ·
+[图文教程](#-图文教程)
+
+> **丑话说在前面。** 这软件会用 adb 和 root 直接改设备底层参数：CPU/GPU 频率、温控、zram 和 swap、
+> 分区镜像、Magisk 模块、开机动画、飞控参数。改错了会变砖、黑屏、丢数据、失去保修。
+> 每个会动系统的按钮旁边都写了后果，动手前先看完软件里的免责声明。
+>
+> 不碰的东西也说清楚：**改固件、去限飞、改发射功率**要重签 DJI 的包，做不到就是做不到，这里不做也不会假装做。
+
+---
 
 ## 机型支持
 
