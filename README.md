@@ -1,6 +1,8 @@
 # RC 搞机工具箱
 
-插上 USB，把 DJI 遥控器当一台安卓机用：看分区、备份镜像、直接刷回去、投屏点着操作、调无人机的飞控参数。
+Windows 上用的一个小工具。插一根 USB 线，DJI 遥控器就当安卓机使。
+
+能看分区、把 14 个分区挨个备份出来、原样刷回去、投屏上点着操作、读无人机的飞控参数。
 
 [![release](https://img.shields.io/github/v/release/456erddgr/rc-gaoji-toolbox?label=release&color=2f81f7)](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)
 [![downloads](https://img.shields.io/github/downloads/456erddgr/rc-gaoji-toolbox/total?color=3fb950)](https://github.com/456erddgr/rc-gaoji-toolbox/releases)
@@ -8,43 +10,42 @@
 [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-0078d4)](#)
 [![license](https://img.shields.io/github/license/456erddgr/rc-gaoji-toolbox)](LICENSE)
 
-**root 还没搞？** 那先去另一个仓库：[RC2 破解](https://github.com/456erddgr/rc2-unlock-toolkit) ——
-Root ADB、9 个 Magisk 模块、原厂分区镜像都在那边。这边负责「装好之后怎么折腾」。
+root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https://github.com/456erddgr/rc2-unlock-toolkit)。
+这边只管一件事：你已经能进 root 了，接下来想干什么。
 
-**[下载 v6.16](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** ·
-[之前的版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) ·
-[碰到问题](https://github.com/456erddgr/rc-gaoji-toolbox/issues) ·
-[机型支持](#机型支持) ·
+**[下 v6.16](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** ·
+[旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) ·
+[提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) ·
+[支持哪些遥控器](#机型支持) ·
 [图文教程](#-图文教程)
 
-> **丑话说在前面。** 这软件会用 adb 和 root 直接改设备底层参数：CPU/GPU 频率、温控、zram 和 swap、
-> 分区镜像、Magisk 模块、开机动画、飞控参数。改错了会变砖、黑屏、丢数据、失去保修。
-> 每个会动系统的按钮旁边都写了后果，动手前先看完软件里的免责声明。
->
-> 不碰的东西也说清楚：**改固件、去限飞、改发射功率**要重签 DJI 的包，做不到就是做不到，这里不做也不会假装做。
+## 动手之前
 
----
+这软件手里有 adb 和 root。它能改 CPU/GPU 频率、改温控、动 zram 和 swap、往分区写镜像、
+刷 Magisk 模块、换开机动画、改飞控参数。任何一项搞错，遥控器都可能黑屏、变砖、丢数据，保修也没了。
+
+不是吓唬你，这几个坑我们都踩过：
+
+- 有一次把背光的 pwm 通道 unexport 了，屏幕当场黑掉，最后靠 `fix_screen.sh` 救回来。那之后这条写死在代码注释里：**pwmchip0 别碰**。
+- swap 文件要是在开机时重建，2046MB 得写 89 秒，而这机器撑到 56 秒就死机了。所以现在只在开机后建。
+- 我以为 `input tap` 能点屏幕，试了两天，rc 返回 0、截图 diff 全是 0。这机器的触摸得直接往 `/dev/input/event2` 写事件。
+
+所以顺序是：先「分区备份」，14 个分区拉下来，再动别的。每个会写系统的按钮旁边都写了后果，别不看。
+
+有三件事我们不干，也不假装干：**改固件、去限飞、改发射功率**。DJI 的固件包是签过名的，重签不了。
 
 ## 下载
 
-两个入口，里头是同一批文件，哪个能下用哪个。
+新版本先发 GitHub：
 
-**① GitHub Releases（跟着版本走，推荐）**
-
-| 文件 | 大小 | 是什么 |
+| 文件 | 大小 | |
 | --- | --- | --- |
-| [`RCGaojiToolbox-Setup-6.16.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RCGaojiToolbox-Setup-6.16.exe) | 96 MB | 安装程序，自带 ViGEmBus 和 DJI 的 USB 驱动，装完直接能用 |
-| [`RCGaojiToolbox-6.16.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RCGaojiToolbox-6.16.exe) | 32 MB | 绿色版，双击就跑，不写注册表（驱动要自己另外装） |
-| [`RC2-RemoteToolbox-2.28.apk`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RC2-RemoteToolbox-2.28.apk) | 398 KB | 遥控器版 App，`adb install` 进遥控器 |
+| [`RCGaojiToolbox-Setup-6.16.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RCGaojiToolbox-Setup-6.16.exe) | 96 MB | 安装程序。ViGEmBus 和 DJI 的 USB 驱动都在里面，装完就能用 |
+| [`RCGaojiToolbox-6.16.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RCGaojiToolbox-6.16.exe) | 32 MB | 绿色版。不写注册表，但驱动得自己装 |
+| [`RC2-RemoteToolbox-2.28.apk`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RC2-RemoteToolbox-2.28.apk) | 398 KB | 遥控器版，`adb install` 进遥控器 |
 
-**② 123 云盘（GitHub 打不开的时候用）**
-
-👉 **[RC2 · 123 云盘](https://1843626542.share.123pan.cn/123pan/VX07Td-v8SoA?pwd=nRmH#)**　提取码 `nRmH`
-
-国内直连 GitHub 有时候就是下不动，网盘里放的是同一批文件，不用登录也不限速。
-网盘里的东西比 Releases 慢一版是正常的——新版本首发都在 Releases。
-
----
+连不上 GitHub 就用网盘：**[123 云盘](https://1843626542.share.123pan.cn/123pan/VX07Td-v8SoA?pwd=nRmH#)**，提取码 `nRmH`。同一批文件，免登录不限速。
+网盘会比 GitHub 慢一两天，新版本一般先在这儿发。
 
 ## 机型支持
 
@@ -316,17 +317,16 @@ python -m PyInstaller build_installer.spec --noconfirm
 
 ## 许可
 
-本仓库的代码（`app/`、`ui/`、`installer/`、构建脚本）用 **MIT**，见 [LICENSE](LICENSE)。随便改、随便发、商用也行，出了事别找我。
+代码是 MIT，见 [LICENSE](LICENSE)。改、发、商用都行，出问题自己扛。
 
-安装包里**顺带装的第三方东西不受 MIT 管**，各自归各自的作者：
+安装包里塞了两个别人的东西：
 
-| 组件 | 许可 / 归属 |
-| --- | --- |
-| ViGEmBus（虚拟手柄驱动） | BSD-3-Clause，作者 Nefarius |
-| DJI 的 USB 驱动（`Drivers_Win10`） | 大疆的，仅随安装包原样附带，未做修改 |
-| 大疆固件包（固件仓库下载的） | 大疆的，本仓库只负责下载和校验 SHA256，不重签、不修改 |
+- **ViGEmBus**：BSD-3-Clause，Nefarius 写的。虚拟手柄全靠它。
+- **DJI 的 USB 驱动**：大疆的，原样附带，一个字节没改。
 
-第三方组件如有异议，提 issue，拿掉就是。
+固件仓库里下的固件包也是大疆的。我们只负责下下来、对一下 SHA256，不重签、不改包。
+
+第三方的东西有异议，提 issue，拿掉就是。
 
 ---
 
