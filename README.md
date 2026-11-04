@@ -32,9 +32,9 @@ Root ADB、9 个 Magisk 模块、原厂分区镜像都在那边。这边负责�
 
 | 文件 | 大小 | 是什么 |
 | --- | --- | --- |
-| [`RCGaojiToolbox-Setup-6.16.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RCGaojiToolbox-Setup-6.16.exe) | 101 MB | 安装程序，自带 ViGEmBus 和 DJI 的 USB 驱动，装完直接能用 |
-| [`RCGaojiToolbox-6.16.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RCGaojiToolbox-6.16.exe) | 34 MB | 绿色版，双击就跑，不写注册表（驱动要自己另外装） |
-| [`RC2-RemoteToolbox-2.28.apk`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RC2-RemoteToolbox-2.28.apk) | 408 KB | 遥控器版 App，`adb install` 进遥控器 |
+| [`RCGaojiToolbox-Setup-6.16.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RCGaojiToolbox-Setup-6.16.exe) | 96 MB | 安装程序，自带 ViGEmBus 和 DJI 的 USB 驱动，装完直接能用 |
+| [`RCGaojiToolbox-6.16.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RCGaojiToolbox-6.16.exe) | 32 MB | 绿色版，双击就跑，不写注册表（驱动要自己另外装） |
+| [`RC2-RemoteToolbox-2.28.apk`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RC2-RemoteToolbox-2.28.apk) | 398 KB | 遥控器版 App，`adb install` 进遥控器 |
 
 **② 123 云盘（GitHub 打不开的时候用）**
 
