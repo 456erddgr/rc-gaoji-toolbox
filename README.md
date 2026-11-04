@@ -13,7 +13,7 @@ Windows 上用的一个小工具。插一根 USB 线，DJI 遥控器就当安卓
 root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https://github.com/456erddgr/rc2-unlock-toolkit)。
 这边只管一件事：你已经能进 root 了，接下来想干什么。
 
-**[下 v6.16](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** · [旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) · [提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) · [支持哪些遥控器](#机型支持) · [图文教程](#图文教程)
+**[下 v6.17](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** · [旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) · [提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) · [支持哪些遥控器](#机型支持) · [图文教程](#图文教程)
 
 ## 动手之前
 
@@ -36,8 +36,8 @@ root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https:
 
 | 文件 | 大小 | |
 | --- | --- | --- |
-| [`RCGaojiToolbox-Setup-6.16.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RCGaojiToolbox-Setup-6.16.exe) | 96 MB | 安装程序。ViGEmBus 和 DJI 的 USB 驱动都在里面，装完就能用 |
-| [`RCGaojiToolbox-6.16.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RCGaojiToolbox-6.16.exe) | 32 MB | 绿色版。不写注册表，但驱动得自己装 |
+| [`RCGaojiToolbox-Setup-6.17.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.17/RCGaojiToolbox-Setup-6.17.exe) | 96 MB | 安装程序。ViGEmBus 和 DJI 的 USB 驱动都在里面，装完就能用 |
+| [`RCGaojiToolbox-6.17.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.17/RCGaojiToolbox-6.17.exe) | 32 MB | 绿色版。不写注册表，但驱动得自己装 |
 | [`RC2-RemoteToolbox-2.28.apk`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RC2-RemoteToolbox-2.28.apk) | 398 KB | 遥控器版，`adb install` 进遥控器 |
 
 连不上 GitHub 就用网盘：**[123 云盘](https://1843626542.share.123pan.cn/123pan/VX07Td-v8SoA?pwd=nRmH#)**，提取码 `nRmH`。同一批文件，免登录不限速。
@@ -57,6 +57,25 @@ root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https:
 某个能力不具备时，软件会直接告诉你中文原因，不会给你一个空列表假装「功能坏了」。
 
 ## 这几个月改了什么
+
+### v6.17 界面重做：液态玻璃 + 自己的弹窗
+
+界面这一层原来很糙：面板是一块半透明矩形，壁纸被压成灰板，控件全是浏览器默认样式。这版重做了。
+
+玻璃怎么做的：面板底是磨砂（`backdrop-filter: blur(22px) saturate(1.75) brightness(1.06)`），边框那圈另铺一层 SVG `feDisplacementMap` 想做出折射，再叠一道跟着鼠标走的镜面高光。磨砂和高光都稳；折射这层在 Edge 里能跑（`getComputedStyle` 读得到 `url("#rcLgRefract")`），但**底色一平就看不出来**，所以现在的实际观感主要来自磨砂 + 边框 + 高光。壁纸换成花的，边缘弯曲才明显。
+
+顺手把壁纸的压暗从 `.55→.72` 松到 `.30→.48→.66`，不然玻璃后面什么都看不见。
+
+弹窗：原来点「修改」弹的是浏览器原生 `prompt`，在 Edge 应用窗口里样式控不住，**关键是输入框拿不到焦点，0 改不了**。现在换了自己的：
+
+- 大号数字居中，右边跟单位，`−` / `+` 步进，↑↓ 也能加减
+- 上下限按参数表校验，超了直接提示；**0 是合法值**，不会被 `value || 默认值` 这种写法吞掉
+- Enter 确定，Esc 取消
+- 危险动作（ADB root、擦除、重启）走红色确认，正文里把后果写清楚
+
+代码里 15 处 `confirm()`、2 处 `prompt()` 全换掉了，不再调用浏览器对话框。
+
+做的时候踩了一个坑记着：弹窗 `build()` 时把输入框 append 进了正文容器，`open()` 里 `innerHTML = ''` 清正文，把输入框一起删了 —— 表现为「弹窗只有标题和按钮，输入框不见」。修法是清完正文重新 append 回来。
 
 ### v6.16 虚拟手柄：先修一个一直没发现的 bug
 
