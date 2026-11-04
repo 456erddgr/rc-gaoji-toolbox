@@ -13,11 +13,7 @@ Windows 上用的一个小工具。插一根 USB 线，DJI 遥控器就当安卓
 root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https://github.com/456erddgr/rc2-unlock-toolkit)。
 这边只管一件事：你已经能进 root 了，接下来想干什么。
 
-**[下 v6.16](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** ·
-[旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) ·
-[提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) ·
-[支持哪些遥控器](#机型支持) ·
-[图文教程](#-图文教程)
+**[下 v6.16](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** · [旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) · [提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) · [支持哪些遥控器](#机型支持) · [图文教程](#-图文教程)
 
 ## 动手之前
 
