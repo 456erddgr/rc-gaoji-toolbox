@@ -13,7 +13,7 @@ Windows 上用的一个小工具。插一根 USB 线，DJI 遥控器就当安卓
 root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https://github.com/456erddgr/rc2-unlock-toolkit)。
 这边只管一件事：你已经能进 root 了，接下来想干什么。
 
-**[下 v6.17](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** · [旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) · [提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) · [支持哪些遥控器](#机型支持) · [图文教程](#图文教程)
+**[下 v6.18](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** · [旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) · [提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) · [支持哪些遥控器](#机型支持) · [图文教程](#图文教程)
 
 ## 动手之前
 
@@ -36,8 +36,8 @@ root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https:
 
 | 文件 | 大小 | |
 | --- | --- | --- |
-| [`RCGaojiToolbox-Setup-6.17.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.17/RCGaojiToolbox-Setup-6.17.exe) | 96 MB | 安装程序。ViGEmBus 和 DJI 的 USB 驱动都在里面，装完就能用 |
-| [`RCGaojiToolbox-6.17.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.17/RCGaojiToolbox-6.17.exe) | 32 MB | 绿色版。不写注册表，但驱动得自己装 |
+| [`RCGaojiToolbox-Setup-6.18.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.18/RCGaojiToolbox-Setup-6.18.exe) | 96 MB | 安装程序。ViGEmBus 和 DJI 的 USB 驱动都在里面，装完就能用 |
+| [`RCGaojiToolbox-6.18.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.18/RCGaojiToolbox-6.18.exe) | 32 MB | 绿色版。不写注册表，但驱动得自己装 |
 | [`RC2-RemoteToolbox-2.28.apk`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RC2-RemoteToolbox-2.28.apk) | 398 KB | 遥控器版，`adb install` 进遥控器 |
 
 连不上 GitHub 就用网盘：**[123 云盘](https://1843626542.share.123pan.cn/123pan/VX07Td-v8SoA?pwd=nRmH#)**，提取码 `nRmH`。同一批文件，免登录不限速。
@@ -57,6 +57,21 @@ root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https:
 某个能力不具备时，软件会直接告诉你中文原因，不会给你一个空列表假装「功能坏了」。
 
 ## 这几个月改了什么
+
+### v6.18 外观自己调：背景通透度 / 磨砂度
+
+上一版壁纸被压得只剩一层灰，玻璃后面什么都看不见。这版把三件事做成滑杆，存在浏览器里，下次打开还是你调的样子：
+
+| 滑杆 | 管什么 | 默认 |
+| --- | --- | --- |
+| 背景通透度 | 壁纸上面那层暗色蒙版的浓度，0% 完全不管、70% 压到发黑 | 26% |
+| 玻璃磨砂 | `backdrop-filter` 的模糊半径，0 是完全透明玻璃、44px 是毛玻璃块 | 24px |
+| 玻璃暗度 | 面板自己那层底色的不透明度，调低就通透、调高就沉 | 62% |
+| 壁纸亮度 | 壁纸本身的 `brightness`，暗壁纸可以往上推，亮壁纸往下压 | 1.04× |
+
+标题栏右上角那个 **◐** 就是入口，「恢复默认」一键还原。默认值比上一版通透得多：蒙版从 `.30/.48/.66` 松到 `.12/.20/.26` 的量级，壁纸该亮就亮。
+
+技术上就三个 CSS 变量在跑：`--wp-dim-a/b/c`（蒙版三段）、`--lg-blur`（磨砂）、`--panel-a`（面板底色）。滑杆只改变量，不重绘 DOM，拖动是即时的。
 
 ### v6.17 界面重做：液态玻璃 + 自己的弹窗
 
