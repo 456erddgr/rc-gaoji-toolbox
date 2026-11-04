@@ -6,7 +6,6 @@
 [![downloads](https://img.shields.io/github/downloads/456erddgr/rc-gaoji-toolbox/total?color=3fb950)](https://github.com/456erddgr/rc-gaoji-toolbox/releases)
 [![stars](https://img.shields.io/github/stars/456erddgr/rc-gaoji-toolbox?color=f0b400)](https://github.com/456erddgr/rc-gaoji-toolbox/stargazers)
 [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-0078d4)](#)
-[![license](https://img.shields.io/github/license/456erddgr/rc-gaoji-toolbox)](LICENSE)
 
 **root 还没搞？** 那先去另一个仓库：[RC2 破解](https://github.com/456erddgr/rc2-unlock-toolkit) ——
 Root ADB、9 个 Magisk 模块、原厂分区镜像都在那边。这边负责「装好之后怎么折腾」。
