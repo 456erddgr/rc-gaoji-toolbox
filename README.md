@@ -13,7 +13,7 @@ Windows 上用的一个小工具。插一根 USB 线，DJI 遥控器就当安卓
 root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https://github.com/456erddgr/rc2-unlock-toolkit)。
 这边只管一件事：你已经能进 root 了，接下来想干什么。
 
-**[下 v6.19](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** · [旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) · [提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) · [支持哪些遥控器](#机型支持) · [图文教程](#图文教程)
+**[下 v6.20](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** · [旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) · [提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) · [支持哪些遥控器](#机型支持) · [图文教程](#图文教程)
 
 ## 动手之前
 
@@ -36,8 +36,8 @@ root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https:
 
 | 文件 | 大小 | |
 | --- | --- | --- |
-| [`RCGaojiToolbox-Setup-6.19.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.19/RCGaojiToolbox-Setup-6.19.exe) | 96 MB | 安装程序。ViGEmBus 和 DJI 的 USB 驱动都在里面，装完就能用 |
-| [`RCGaojiToolbox-6.19.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.19/RCGaojiToolbox-6.19.exe) | 32 MB | 绿色版。不写注册表，但驱动得自己装 |
+| [`RCGaojiToolbox-Setup-6.20.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.20/RCGaojiToolbox-Setup-6.20.exe) | 96 MB | 安装程序。ViGEmBus 和 DJI 的 USB 驱动都在里面，装完就能用 |
+| [`RCGaojiToolbox-6.20.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.20/RCGaojiToolbox-6.20.exe) | 32 MB | 绿色版。不写注册表，但驱动得自己装 |
 | [`RC2-RemoteToolbox-2.28.apk`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RC2-RemoteToolbox-2.28.apk) | 398 KB | 遥控器版，`adb install` 进遥控器 |
 
 连不上 GitHub 就用网盘：**[123 云盘](https://1843626542.share.123pan.cn/123pan/VX07Td-v8SoA?pwd=nRmH#)**，提取码 `nRmH`。同一批文件，免登录不限速。
@@ -57,6 +57,19 @@ root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https:
 某个能力不具备时，软件会直接告诉你中文原因，不会给你一个空列表假装「功能坏了」。
 
 ## 这几个月改了什么
+
+### v6.20 切槽一键化
+
+上一版切槽要按三步（进 Fastboot → 切槽 → 重启），这版合成一个按钮。
+
+| 按钮 | 干什么 |
+| --- | --- |
+| 一键切到 A 槽（重启→切槽→重启） | `reboot bootloader` → 等 fastboot（最多 90 秒）→ `set_active a` → `fastboot reboot` |
+| 一键切回 B 槽 | 同上，目标 b |
+
+实机链路（2026-11-05，目标 b）：`Setting current slot to 'b'  OKAY [0.005s]` → 回读 b → 重启 60 秒后 `sys.boot_completed=1`、`slot_suffix=_b`。
+
+顺带把鸿蒙移植的思路摸清了，写在仓库外的 `RC2-鸿蒙移植思路与可行性.md`：那个 sheng（小米平板 6S Pro）项目是「华为系统盘 + 小米启动链 + 自写兼容垫片」，**仓库里没有系统本体**，donor 要自己从真华为平板 dump；RC2 的内核是 DJI 5.4.210、内存 1.71 GB，所以现在不假装能刷。
 
 ### v6.19 切槽：A/B 双系统一句话换
 
