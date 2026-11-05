@@ -13,7 +13,7 @@ Windows 上用的一个小工具。插一根 USB 线，DJI 遥控器就当安卓
 root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https://github.com/456erddgr/rc2-unlock-toolkit)。
 这边只管一件事：你已经能进 root 了，接下来想干什么。
 
-**[下 v6.18](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** · [旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) · [提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) · [支持哪些遥控器](#机型支持) · [图文教程](#图文教程)
+**[下 v6.19](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** · [旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) · [提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) · [支持哪些遥控器](#机型支持) · [图文教程](#图文教程)
 
 ## 动手之前
 
@@ -36,8 +36,8 @@ root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https:
 
 | 文件 | 大小 | |
 | --- | --- | --- |
-| [`RCGaojiToolbox-Setup-6.18.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.18/RCGaojiToolbox-Setup-6.18.exe) | 96 MB | 安装程序。ViGEmBus 和 DJI 的 USB 驱动都在里面，装完就能用 |
-| [`RCGaojiToolbox-6.18.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.18/RCGaojiToolbox-6.18.exe) | 32 MB | 绿色版。不写注册表，但驱动得自己装 |
+| [`RCGaojiToolbox-Setup-6.19.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.19/RCGaojiToolbox-Setup-6.19.exe) | 96 MB | 安装程序。ViGEmBus 和 DJI 的 USB 驱动都在里面，装完就能用 |
+| [`RCGaojiToolbox-6.19.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.19/RCGaojiToolbox-6.19.exe) | 32 MB | 绿色版。不写注册表，但驱动得自己装 |
 | [`RC2-RemoteToolbox-2.28.apk`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RC2-RemoteToolbox-2.28.apk) | 398 KB | 遥控器版，`adb install` 进遥控器 |
 
 连不上 GitHub 就用网盘：**[123 云盘](https://1843626542.share.123pan.cn/123pan/VX07Td-v8SoA?pwd=nRmH#)**，提取码 `nRmH`。同一批文件，免登录不限速。
@@ -57,6 +57,23 @@ root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https:
 某个能力不具备时，软件会直接告诉你中文原因，不会给你一个空列表假装「功能坏了」。
 
 ## 这几个月改了什么
+
+### v6.19 切槽：A/B 双系统一句话换
+
+这台遥控器本来就带 A/B 两个系统槽，平时只有一个在用（现在用的是 b）。ABL 原本拿它做 OTA 回滚，但它也能当"第二系统"的开关：Android 留在 b，别的系统放 a，切槽就等于切系统。
+
+「刷机 / 恢复」页多了一张 **系统槽位（A/B 双系统）** 卡片，按钮是「刷新 / 进入 Fastboot / 切到 A 槽 / 切到 B 槽 / 从 FB 重启」。
+
+实机跑过的完整链路（2026-11-05）：
+
+1. 系统里点「进入 Fastboot」→ 25 秒后状态变 `mode=fastboot`；
+2. 「切到 A 槽」→ `Setting current slot to 'a'  OKAY [0.019s]`，回读 `current=a`；
+3. 再「切到 B 槽」→ 回读 `current=b`；
+4. 「从 FB 重启」→ 约 55 秒回安卓，`sys.boot_completed=1`、`slot_suffix=_b`。
+
+为什么只能在 Fastboot 里切，两条都实测过：系统里没有 `bootctl`（`/system/bin/sh: bootctl: inaccessible or not found`）；`misc` 偏移 2048 的 AOSP `slot_suffix` 在这台机器上是空的，高通 ABL 不读它。
+
+切坏了不会变砖：实测把 a 槽刷成一个起不来的镜像，ABL 试 a 失败后自己回退到 b，安卓照常启动。
 
 ### v6.18 外观自己调：背景通透度 / 磨砂度
 
