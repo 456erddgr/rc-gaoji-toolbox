@@ -13,7 +13,7 @@ Windows 上用的一个小工具。插一根 USB 线，DJI 遥控器就当安卓
 root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https://github.com/456erddgr/rc2-unlock-toolkit)。
 这边只管一件事：你已经能进 root 了，接下来想干什么。
 
-**[下 v6.20](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** · [旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) · [提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) · [支持哪些遥控器](#机型支持) · [图文教程](#图文教程)
+**[下 v6.21](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** · [旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) · [提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) · [支持哪些遥控器](#机型支持) · [图文教程](#图文教程)
 
 ## 动手之前
 
@@ -36,9 +36,9 @@ root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https:
 
 | 文件 | 大小 | |
 | --- | --- | --- |
-| [`RCGaojiToolbox-Setup-6.20.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.20/RCGaojiToolbox-Setup-6.20.exe) | 96 MB | 安装程序。ViGEmBus 和 DJI 的 USB 驱动都在里面，装完就能用 |
-| [`RCGaojiToolbox-6.20.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.20/RCGaojiToolbox-6.20.exe) | 32 MB | 绿色版。不写注册表，但驱动得自己装 |
-| [`RC2-RemoteToolbox-2.28.apk`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RC2-RemoteToolbox-2.28.apk) | 398 KB | 遥控器版，`adb install` 进遥控器 |
+| [`RCGaojiToolbox-Setup-6.21.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.21/RCGaojiToolbox-Setup-6.21.exe) | 96 MB | 安装程序。ViGEmBus 和 DJI 的 USB 驱动都在里面，装完就能用 |
+| [`RCGaojiToolbox-6.21.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.21/RCGaojiToolbox-6.21.exe) | 32 MB | 绿色版。不写注册表，但驱动得自己装 |
+| [`RC2-RemoteToolbox-2.29.apk`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RC2-RemoteToolbox-2.29.apk) | 398 KB | 遥控器版，`adb install` 进遥控器 |
 
 连不上 GitHub 就用网盘：**[123 云盘](https://1843626542.share.123pan.cn/123pan/VX07Td-v8SoA?pwd=nRmH#)**，提取码 `nRmH`。同一批文件，免登录不限速。
 网盘会比 GitHub 慢一两天，新版本一般先在这儿发。
@@ -57,6 +57,24 @@ root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https:
 某个能力不具备时，软件会直接告诉你中文原因，不会给你一个空列表假装「功能坏了」。
 
 ## 这几个月改了什么
+
+### v6.21 换皮：去掉 AI 味
+
+这一版没加功能，专门收拾界面。原来那三个"一眼 AI"的写法都拆了：
+
+| 原来 | 现在 |
+| --- | --- |
+| 导航拿 unicode 字形当图标（`⚡ ✳ ▤ ❄`） | 同一套 24×24 线性 SVG，`stroke-width 1.6`、圆头，颜色跟着文字走 |
+| 卡片标题前面一条蓝紫渐变小竖条 | 删掉。层级靠字重和字距，不靠装饰色块 |
+| 面板对角渐变底 + 彩色描边 | 扁平表面 + 发丝描边（`#23252a`）+ 单一强调色 `#5e6ad2` |
+
+顺手收拾的：没连设备时 `- MHz`、`- %` 这类空值原来是绿的红的，现在统一压成灰 —— 颜色只留给真数据；"实时状态"底下那根多余横向滚动条也没了。
+
+背景还是留着的（你要的通透感），只给壁纸加了 13px 虚化 + 压暗，正文不再被花纹抢。
+
+动效只有一处：切页时内容逐条上浮淡入（8px、每条错开 34ms、共 520ms）。系统开了"减少动态效果"就全关。
+
+遥控器版同时升到 **v2.29**，用的是同一套配色（注意：这块只有编译验证，当时遥控器没插，没有真机截图）。
 
 ### v6.20 切槽一键化
 
