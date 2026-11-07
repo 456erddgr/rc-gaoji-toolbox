@@ -13,7 +13,7 @@ Windows 上用的一个小工具。插一根 USB 线，DJI 遥控器就当安卓
 root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https://github.com/456erddgr/rc2-unlock-toolkit)。
 这边只管一件事：你已经能进 root 了，接下来想干什么。
 
-**[下 v6.23](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** · [旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) · [提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) · [支持哪些遥控器](#机型支持) · [图文教程](#图文教程)
+**[下 v6.24](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** · [旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) · [提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) · [支持哪些遥控器](#机型支持) · [图文教程](#图文教程)
 
 ## 动手之前
 
@@ -36,9 +36,9 @@ root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https:
 
 | 文件 | 大小 | |
 | --- | --- | --- |
-| [`RCGaojiToolbox-Setup-6.23.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.23/RCGaojiToolbox-Setup-6.23.exe) | 96 MB | 安装程序。ViGEmBus 和 DJI 的 USB 驱动都在里面，装完就能用 |
-| [`RCGaojiToolbox-6.23.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.23/RCGaojiToolbox-6.23.exe) | 32 MB | 绿色版。不写注册表，但驱动得自己装 |
-| [`RC2-RemoteToolbox-2.29.apk`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.23/RC2-RemoteToolbox-2.29.apk) | 398 KB | 遥控器版，`adb install` 进遥控器 |
+| [`RCGaojiToolbox-Setup-6.24.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.24/RCGaojiToolbox-Setup-6.24.exe) | 96 MB | 安装程序。ViGEmBus 和 DJI 的 USB 驱动都在里面，装完就能用 |
+| [`RCGaojiToolbox-6.24.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.24/RCGaojiToolbox-6.24.exe) | 32 MB | 绿色版。不写注册表，但驱动得自己装 |
+| [`RC2-RemoteToolbox-2.29.apk`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.24/RC2-RemoteToolbox-2.29.apk) | 398 KB | 遥控器版，`adb install` 进遥控器 |
 
 连不上 GitHub 就用网盘：**[123 云盘](https://1843626542.share.123pan.cn/123pan/VX07Td-v8SoA?pwd=nRmH#)**，提取码 `nRmH`。同一批文件，免登录不限速。
 网盘会比 GitHub 慢一两天，新版本一般先在这儿发。
@@ -57,6 +57,18 @@ root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https:
 某个能力不具备时，软件会直接告诉你中文原因，不会给你一个空列表假装「功能坏了」。
 
 ## 这几个月改了什么
+
+### v6.24 磨砂/圆角真能调了
+
+上一版「调了没反应」的真因不是开关坏了，是**面板太不透明**：默认厚度 90%，背景只透 10%，
+磨砂从 0 拉到 40 都看不出来。默认降到 78%，下限抬到 40%，现在拉滑杆肉眼可见。
+
+圆角之前压根没接上——`settings.js` 里只加了 `radius` 变量，`apply()` 没写进 CSS；
+现在写了 `--r-card / --r-mid / --r-ctl`，卡片、按钮、输入框、弹窗一起变。
+顺带把设置存储键换成 `rc2.ui2`，旧存的厚度 90 不会再盖掉新默认。
+
+侧栏不再是纯黑：从 `#0d0e10` 改成 `rgba(22,24,29,.86)` 的深灰面板，保留毛玻璃和右侧发丝线。
+标题栏那个「RC」文字也换成了真正的图标。
 
 ### v6.23 窗口终于像个正经程序
 
