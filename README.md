@@ -13,7 +13,7 @@ Windows 上用的一个小工具。插一根 USB 线，DJI 遥控器就当安卓
 root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https://github.com/456erddgr/rc2-unlock-toolkit)。
 这边只管一件事：你已经能进 root 了，接下来想干什么。
 
-**[下 v6.21](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** · [旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) · [提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) · [支持哪些遥控器](#机型支持) · [图文教程](#图文教程)
+**[下 v6.23](https://github.com/456erddgr/rc-gaoji-toolbox/releases/latest)** · [旧版本](https://github.com/456erddgr/rc-gaoji-toolbox/releases) · [提 issue](https://github.com/456erddgr/rc-gaoji-toolbox/issues) · [支持哪些遥控器](#机型支持) · [图文教程](#图文教程)
 
 ## 动手之前
 
@@ -36,9 +36,9 @@ root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https:
 
 | 文件 | 大小 | |
 | --- | --- | --- |
-| [`RCGaojiToolbox-Setup-6.21.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.21/RCGaojiToolbox-Setup-6.21.exe) | 96 MB | 安装程序。ViGEmBus 和 DJI 的 USB 驱动都在里面，装完就能用 |
-| [`RCGaojiToolbox-6.21.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.21/RCGaojiToolbox-6.21.exe) | 32 MB | 绿色版。不写注册表，但驱动得自己装 |
-| [`RC2-RemoteToolbox-2.29.apk`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.16/RC2-RemoteToolbox-2.29.apk) | 398 KB | 遥控器版，`adb install` 进遥控器 |
+| [`RCGaojiToolbox-Setup-6.23.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.23/RCGaojiToolbox-Setup-6.23.exe) | 96 MB | 安装程序。ViGEmBus 和 DJI 的 USB 驱动都在里面，装完就能用 |
+| [`RCGaojiToolbox-6.23.exe`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.23/RCGaojiToolbox-6.23.exe) | 32 MB | 绿色版。不写注册表，但驱动得自己装 |
+| [`RC2-RemoteToolbox-2.29.apk`](https://github.com/456erddgr/rc-gaoji-toolbox/releases/download/v6.23/RC2-RemoteToolbox-2.29.apk) | 398 KB | 遥控器版，`adb install` 进遥控器 |
 
 连不上 GitHub 就用网盘：**[123 云盘](https://1843626542.share.123pan.cn/123pan/VX07Td-v8SoA?pwd=nRmH#)**，提取码 `nRmH`。同一批文件，免登录不限速。
 网盘会比 GitHub 慢一两天，新版本一般先在这儿发。
@@ -73,6 +73,11 @@ root 怎么来的不在这儿，在另一个仓库：[rc2-unlock-toolkit](https:
 顺手加的：外观面板里多了 **圆角大小（6~24px）** 一项，一拉，卡片、按钮、输入框、弹窗一起变；标题栏整条从上方滑入、侧栏导航逐条淡入、切换明暗主题时颜色 280ms 过渡。
 
 「关于/免责」也重写了，换成「这是什么 / 有风险 / 作者不承担的责任 / 关于数据 / 许可与致谢」五段。
+
+### v6.22 外观自己调
+
+标题栏右上角多了「外观」：明暗主题（跟随系统/浅色/深色）、液态玻璃开关、磨砂强度、玻璃厚度、
+背景虚化、背景亮度、背景压暗、界面动画开关、恢复默认。全部存本地，下次打开还是你调的样子。
 
 ### v6.21 换皮：去掉 AI 味
 
